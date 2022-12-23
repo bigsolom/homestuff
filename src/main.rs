@@ -1,20 +1,7 @@
-use std::process::Command;
 
 fn main() {
-    let output = if cfg!(target_os = "windows") {
-        Command::new("cmd")
-            .args(["/C", "echo hello"])
-            .output()
-            .expect("failed to execute process")
-    } else {
-        Command::new("sh")
-            .arg("-c")
-            .arg("echo hello")
-            .output()
-            .expect("failed to execute process")
-    };
+     let ip = homestuff::get_hue_hub_ip();
+     dbg!(&ip);
 
-    // let hello = output.stdout;
-
-    dbg!(&output.stdout);
+     homestuff::philips_hue::create_username(&ip.expect("couldn't get it"));
 }
