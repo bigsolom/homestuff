@@ -40,6 +40,6 @@ mod tests {
         //TODO: How to mock the arp -a command?
         let result = get_hue_hub_ip();
 
-        assert_eq!(Some(String::from("eslam")), result);
+        assert_eq!(Some(String::from("192.168.1.5")), result);
     }
 }

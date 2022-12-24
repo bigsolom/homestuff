@@ -1,24 +1,33 @@
 use std::collections::HashMap;
 use serde::Deserialize;
+use serde::de::DeserializeOwned;
 
-#[derive(Deserialize, Debug)]
-pub struct HueErrorResponse {
-    error: HueError
+#[derive(Debug, PartialEq)]
+pub enum HueState {
+    PressLinkButton,
+    UsernameCreated { username: String },
 }
 
 #[derive(Deserialize, Debug)]
-pub struct HueError {
+struct HueErrorResponse {
+    error: HueError,
+}
+
+#[derive(Deserialize, Debug)]
+struct HueError {
     r#type: usize,
     address: String,
     description: String,
 }
+
 #[derive(Deserialize, Debug)]
-pub struct HueUsername {
-    username: String
+struct HueUsername {
+    username: String,
 }
+
 #[derive(Deserialize, Debug)]
-pub struct HueSuccessUsernameResponse {
-    success: HueUsername
+struct HueSuccessUsernameResponse {
+    success: HueUsername,
 }
 
 pub fn ping_hue(ip: &str) -> Result<(), Box<dyn std::error::Error>> {
@@ -27,7 +36,10 @@ pub fn ping_hue(ip: &str) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-pub fn create_username(hub_ip: &str) -> Result<(), Box<dyn std::error::Error>> {
+fn create_resource<T>(hub_ip: &str) -> Result<T, Box<dyn std::error::Error>>
+    where
+        T: DeserializeOwned
+{
     let mut map = HashMap::new();
     map.insert("devicetype", "homestuff#local");
     println!("Request: {:?}", map);
@@ -37,10 +49,17 @@ pub fn create_username(hub_ip: &str) -> Result<(), Box<dyn std::error::Error>> {
     let res = client.post(format!("http://{}/api/", hub_ip))
         .json(&map)
         .send()?.error_for_status()?;
-    println!("Response: {:?}", &res);
-    let hue_response: Vec<HueErrorResponse> = res.json()?;
-    println!("Response: {:?}", &hue_response);
-    Ok(())
+    let ret = res.json::<T>()?;
+    Ok(ret)
+}
+
+pub fn create_username(hub_ip: &str) -> Result<HueState, Box<dyn std::error::Error>> {
+    let response = create_resource::<Vec<HueErrorResponse>>(hub_ip)?;
+    if response[0].error.r#type == 101 {
+        Ok(HueState::PressLinkButton)
+    } else {
+        Err("casdas".into())
+    }
 }
 
 #[cfg(test)]
@@ -50,9 +69,6 @@ mod tests {
     #[test]
     fn create_username_returns_link_not_pressed() {
         let result = create_username("192.168.1.5");
-        match result {
-            Ok(h) => assert_eq!(h, ()),
-            Err(e) => println!("Error: {}", e)
-        }
+        assert_eq!(HueState::PressLinkButton, result.unwrap());
     }
 }
