@@ -32,7 +32,7 @@ struct HueSuccessUsernameResponse {
 
 pub fn ping_hue(ip: &str) -> Result<(), Box<dyn std::error::Error>> {
     println!("Pinging: {ip} ...");
-    reqwest::blocking::get(format!("http://{ip}/api/newdeveloper"))?.error_for_status()?;
+    reqwest::blocking::get(format!("http://{ip}/api"))?.error_for_status()?;
     Ok(())
 }
 
@@ -60,6 +60,12 @@ pub fn create_username(hub_ip: &str) -> Result<HueState, Box<dyn std::error::Err
     } else {
         Err("casdas".into())
     }
+}
+
+pub fn create_username_after_pressing(hub_ip: &str) -> Result<HueState, Box<dyn std::error::Error>> {
+    let response = create_resource::<Vec<HueSuccessUsernameResponse>>(hub_ip)?;
+    let username = &response[0].success.username;
+    Ok(HueState::UsernameCreated { username: username.clone() })
 }
 
 #[cfg(test)]
