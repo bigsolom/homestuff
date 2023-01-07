@@ -12,10 +12,11 @@ pub fn get_hue_hub_ip() -> Option<String> {
     let arp_result = command_arp();
     let re = Regex::new(r"\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\)").unwrap();
     for cap in re.captures_iter(&arp_result) {
-        match  philips_hue::ping_hue(&cap[1]){
+        let client = philips_hue::PhilipsHueClient { ip: format!("http://{}", &cap[1]) };
+        match client.ping() {
             Ok(()) => {
                 return Some(String::from(&cap[1]));
-            },
+            }
             _ => continue
         }
     }
