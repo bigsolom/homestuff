@@ -57,7 +57,7 @@ impl PhilipsHueClient {
         Ok(ret)
     }
 
-    pub fn create_username(&self) -> Result<HueState, Box<dyn std::error::Error>> {
+    pub fn register_application_on_hue(&self) -> Result<HueState, Box<dyn std::error::Error>> {
         let response = self.create_resource::<Vec<HueErrorResponse>>()?;
         if response[0].error.r#type == 101 {
             Ok(HueState::PressLinkButton)
@@ -66,7 +66,7 @@ impl PhilipsHueClient {
         }
     }
 
-    pub fn create_username_after_pressing(&self) -> Result<HueState, Box<dyn std::error::Error>> {
+    pub fn create_username(&self) -> Result<HueState, Box<dyn std::error::Error>> {
         let response = self.create_resource::<Vec<HueSuccessUsernameResponse>>()?;
         let username = &response[0].success.username;
         Ok(HueState::UsernameCreated { username: username.clone() })
@@ -121,7 +121,7 @@ mod tests {
 
 
     #[test]
-    fn create_username_returns_link_not_pressed() {
+    fn register_app_on_hue_returns_link_not_pressed() {
         let ip = &mockito::server_url();
         let client = PhilipsHueClient { ip: String::from(ip) };
         let _m = mock("POST", "/api")
@@ -136,7 +136,7 @@ mod tests {
                 }
             ]"#)
             .create();
-        let result = client.create_username();
+        let result = client.register_application_on_hue();
         assert_eq!(HueState::PressLinkButton, result.unwrap());
     }
 
@@ -154,7 +154,7 @@ mod tests {
                 }
             ]"#)
             .create();
-        let result = client.create_username_after_pressing();
+        let result = client.create_username();
         assert_eq!(HueState::UsernameCreated {username: String::from("abc123")}, result.unwrap());
     }
 }
