@@ -16,27 +16,27 @@ But regardless of how you write it, what should be clear is:
 - What problem is this feature trying to solve/ what's the goal of this feature
 
 
-## Acceptance Criteria
+## Acceptance Criteria :mag
 
-## Validations
+## Validations :ballot_box_with_check
 
-## Translations
+## Translations :de
 
 | Key/Condition | German | English |
 | ------------- | ------ | ------- |
 | e.g. first name missing | Vorname muss ausgefüllt werden | First name is required | 
 
-## Design
+## Design :art
 
-## Dependencies
+## Dependencies :toolbox
 
-## Release
+## Release :package
 
-### Availability (all clients, feature protection)
+### Availability (all clients, feature protection) :busts_in_silhoutte
 
 Will this feature be available for every user? Only specific users (with a role)? Feature switch? Gradual release? ...
 
-### Notes
+### Notes :notebook
 
 - Should Customer Success or Sales be informed about this feature?
 - Should we add/change Feature description in [Fortytools marketing website](https://www.fortytools.com/)
