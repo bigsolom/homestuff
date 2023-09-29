@@ -48,7 +48,7 @@ Please add links to other issues here
 
 ## Release :rocket:
 
-### Availability (all clients, feature protection) :busts_in_silhoutte:
+### Availability (all clients, feature protection) :busts_in_silhouette:
 
 Will this feature be available for every user? Only specific users (with a role)? Feature switch? Gradual release? ...
 
